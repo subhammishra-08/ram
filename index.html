@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>StickTuber: Punch Fight Dance | Pro 2-Key Rhythm Fighter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Channel Top Header Bar -->
+    <header id="stream-header">
+      <div class="header-left">
+        <div class="tuber-avatar">
+          <span class="avatar-icon">🥋</span>
+          <span class="live-pulse"></span>
+        </div>
+        <div class="channel-meta">
+          <div class="channel-title">
+            <span>StickTuber</span>
+            <span class="verified-badge" title="Verified Creator">✓</span>
+          </div>
+          <div class="channel-stats">
+            <span id="channel-subs" class="stat-subs">10.0K Subs</span>
+            <span class="stat-sep">•</span>
+            <span id="channel-coins" class="stat-coins">$600</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div id="live-indicator" class="live-tag">
+          <span class="live-dot"></span> LIVE
+        </div>
+        <div class="stream-metrics">
+          <span class="metric-item"><span class="metric-icon">👥</span> <strong id="live-viewers">1,250</strong></span>
+          <span class="metric-item"><span class="metric-icon">👍</span> <strong id="live-likes">42</strong></span>
+          <span class="metric-item"><span class="metric-icon">⏱️</span> <strong id="stream-timer">00:00</strong></span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btn-audio-mute" class="header-btn icon-only" title="Mute/Unmute Audio">
+          <span id="mute-icon">🔊</span>
+        </button>
+        <button id="btn-open-shop" class="header-btn" title="Gear Shop">
+          <span class="icon">🛒</span> <span class="btn-text">GEAR SHOP</span>
+        </button>
+        <button id="btn-open-howtoplay" class="header-btn" title="How to Play">
+          <span class="icon">❓</span> <span class="btn-text">HOW TO PLAY</span>
+        </button>
+        <button id="btn-open-settings" class="header-btn icon-only" title="Settings">
+          <span>⚙️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Canvas Container -->
+    <main id="game-container">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- In-Game Combat HUD -->
+      <div id="screen-game" class="screen-layer hidden">
+        <!-- Top HUD (Hearts, Score, Wave, Pause) -->
+        <div id="hud-top">
+          <div id="hud-hearts" class="hearts-row">
+            <span class="heart full">❤️</span>
+            <span class="heart full">❤️</span>
+            <span class="heart full">❤️</span>
+          </div>
+
+          <div class="hud-center-score">
+            <div class="score-label">STREAM SCORE</div>
+            <div id="hud-score" class="score-value">0</div>
+          </div>
+
+          <div class="hud-top-right">
+            <div id="hud-wave" class="wave-badge">WAVE 1</div>
+            <button id="btn-hud-pause" class="btn-hud-pause" title="Pause Stream [Esc]">
+              ⏸️
+            </button>
+          </div>
+        </div>
+
+        <!-- Combo Feedback Meter -->
+        <div id="hud-combo-container" class="combo-display hidden">
+          <div class="combo-label">COMBO</div>
+          <div id="hud-combo-num" class="combo-number">0x</div>
+        </div>
+
+        <!-- Fever / Overdrive Gauge -->
+        <div id="hud-fever-wrapper">
+          <div class="fever-title">OVERDRIVE FEVER</div>
+          <div class="fever-meter-track">
+            <div id="hud-fever-fill" class="fever-meter-fill"></div>
+          </div>
+          <button id="hud-fever-btn" class="fever-burst-btn hidden">
+            ⚡ OVERDRIVE READY! [SPACE]
+          </button>
+        </div>
+
+        <!-- Live Streamer Chat Sidebar Overlay -->
+        <aside id="stream-chat-sidebar">
+          <div class="chat-header">
+            <span>LIVE STREAM CHAT</span>
+            <span class="chat-live-dot">●</span>
+          </div>
+          <div id="stream-chat-messages" class="chat-feed">
+            <!-- Messages inserted dynamically -->
+          </div>
+        </aside>
+
+        <!-- 2-Key Touch & Click Combat Controls -->
+        <div id="combat-controls">
+          <button id="btn-touch-left" class="action-btn action-left" aria-label="Punch Left">
+            <div class="btn-glow"></div>
+            <div class="key-hint">A / ◄ / J</div>
+            <div class="action-label">◄ PUNCH LEFT</div>
+          </button>
+
+          <button id="btn-touch-fever" class="action-fever-mobile" aria-label="Overdrive">
+            ⚡ FEVER
+          </button>
+
+          <button id="btn-touch-right" class="action-btn action-right" aria-label="Punch Right">
+            <div class="btn-glow"></div>
+            <div class="key-hint">D / ► / L</div>
+            <div class="action-label">PUNCH RIGHT ►</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Home / Stream Studio Screen -->
+      <div id="screen-menu" class="screen-layer">
+        <div class="hero-center">
+          <div class="hero-logo-container">
+            <div class="logo-sub">2-KEY RHYTHM FIGHTER & LIVESTREAM SIMULATOR</div>
+            <h1 class="hero-title">
+              STICK<span class="neon-accent">TUBER</span>
+            </h1>
+            <div class="hero-badge">PUNCH • FIGHT • DANCE</div>
+          </div>
+
+          <p class="hero-pitch">
+            Fight waves of stickmen in sync with high-energy synthesized EDM beats! Tap <strong>LEFT</strong> and <strong>RIGHT</strong> to strike, counter multi-hit brawlers, trigger <strong>OVERDRIVE FEVER</strong>, and climb from rookie streamer to multiverse superstar!
+          </p>
+
+          <div class="game-mode-cards">
+            <div class="mode-card mode-career">
+              <div class="mode-icon">🏆</div>
+              <div class="mode-info">
+                <h3>STREAMER CAREER TOUR</h3>
+                <p>Climb the charts through 4 original synthesized EDM tracks, defeat rival boss streamers, and earn play buttons!</p>
+              </div>
+              <button id="btn-start-career" class="btn-play primary">START CAREER STREAM 🚀</button>
+            </div>
+
+            <div class="mode-card mode-endless">
+              <div class="mode-icon">⚡</div>
+              <div class="mode-info">
+                <h3>24/7 ENDLESS STREAM</h3>
+                <p>Non-stop survival wave. Infinite scaling speed & beats. Set the multiverse high score record!</p>
+              </div>
+              <button id="btn-start-endless" class="btn-play secondary">GO LIVE ENDLESS 🔴</button>
+            </div>
+          </div>
+
+          <!-- Career Stage Select Preview -->
+          <div class="career-preview">
+            <div class="section-title">CHOOSE SONG STAGE</div>
+            <div id="career-track-list" class="track-grid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- PAUSE MODAL -->
+    <div id="modal-pause" class="modal-overlay hidden">
+      <div class="modal-window pause-modal-window">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="modal-icon">⏸️</span> STREAM PAUSED
+          </div>
+        </div>
+        <div class="pause-content">
+          <p class="pause-desc">The stream is temporarily paused. Viewers are waiting for your return!</p>
+          <div class="pause-actions">
+            <button id="btn-pause-resume" class="btn-play primary">RESUME STREAM ▶️</button>
+            <button id="btn-pause-restart" class="btn-play secondary">RESTART TRACK 🔄</button>
+            <button id="btn-pause-menu" class="btn-shop btn-equip">RETURN TO STUDIO HUB 🏠</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOP MODAL -->
+    <div id="modal-shop" class="modal-overlay hidden">
+      <div class="modal-window shop-modal-window">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="modal-icon">🛒</span> STICKTUBER GEAR SHOP
+          </div>
+          <div class="shop-balance">
+            Balance: <strong id="shop-coins-display">$600</strong>
+          </div>
+          <button id="btn-close-shop" class="btn-modal-close">✕</button>
+        </div>
+
+        <div class="shop-tabs">
+          <button id="shop-tab-weapons" class="tab-btn active">WEAPONS</button>
+          <button id="shop-tab-hats" class="tab-btn">HEADGEAR & SKINS</button>
+          <button id="shop-tab-themes" class="tab-btn">STUDIO THEMES</button>
+        </div>
+
+        <div id="shop-items-list" class="shop-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="modal-overlay hidden">
+      <div class="modal-window settings-modal-window">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="modal-icon">⚙️</span> AUDIO & CONTROLS SETTINGS
+          </div>
+          <button id="btn-close-settings" class="btn-modal-close">✕</button>
+        </div>
+
+        <div class="settings-content">
+          <div class="setting-row">
+            <div class="setting-label">Master Volume</div>
+            <input type="range" id="slider-master" min="0" max="1" step="0.05" value="0.8" class="slider" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">EDM Music Volume</div>
+            <input type="range" id="slider-music" min="0" max="1" step="0.05" value="0.7" class="slider" />
+          </div>
+          <div class="setting-row">
+            <div class="setting-label">Combat SFX Volume</div>
+            <input type="range" id="slider-sfx" min="0" max="1" step="0.05" value="0.9" class="slider" />
+          </div>
+
+          <div class="controls-guide-box">
+            <h4>🎮 KEYBOARD & TOUCH CONTROLS</h4>
+            <ul>
+              <li><strong>Left Punch / Kick:</strong> <kbd>A</kbd> or <kbd>◄</kbd> or <kbd>J</kbd></li>
+              <li><strong>Right Punch / Kick:</strong> <kbd>D</kbd> or <kbd>►</kbd> or <kbd>L</kbd></li>
+              <li><strong>Overdrive Fever Burst:</strong> <kbd>Space</kbd> or <kbd>W</kbd> or <kbd>▲</kbd></li>
+              <li><strong>Pause / Resume:</strong> <kbd>Esc</kbd> or <kbd>P</kbd></li>
+              <li><strong>Touch / Mobile:</strong> Tap the large Left & Right hit zones on screen!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY MODAL -->
+    <div id="modal-howtoplay" class="modal-overlay hidden">
+      <div class="modal-window howto-modal-window">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="modal-icon">📖</span> HOW TO PLAY STICKTUBER
+          </div>
+          <button id="btn-close-howtoplay" class="btn-modal-close">✕</button>
+        </div>
+
+        <div class="howto-content">
+          <div class="howto-step">
+            <div class="step-badge">1</div>
+            <div class="step-text">
+              <strong>Watch the Strike Range:</strong> Enemies run in from the left and right to the rhythm of the EDM soundtrack. Pay attention to the neon attack brackets on the floor!
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="step-badge">2</div>
+            <div class="step-text">
+              <strong>Strike on the Beat:</strong> Press <strong>LEFT</strong> or <strong>RIGHT</strong> when an enemy is inside your strike range. Hitting near the beat or sweet spot awards <strong>PERFECT!</strong> (+500 pts) and charges Fever rapidly.
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="step-badge">3</div>
+            <div class="step-text">
+              <strong>Don't Whiff!</strong> Pressing when no enemy is in range causes a MISS, drops your combo, and pauses your recovery. Strike with precision!
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="step-badge">4</div>
+            <div class="step-text">
+              <strong>Armored Brawlers & Ninjas:</strong> Look at the rhythm indicator dots above multi-hit stickmen. Follow the arrows to crack armor and eliminate them.
+            </div>
+          </div>
+          <div class="howto-step">
+            <div class="step-badge">5</div>
+            <div class="step-text">
+              <strong>Overdrive Fever Mode:</strong> When your Fever gauge reaches 100%, hit <strong>SPACE</strong> or tap the Fever button to turn into a Golden Super Saiyan stickman with 5x multiplier!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST-STREAM SUMMARY MODAL -->
+    <div id="modal-summary" class="modal-overlay hidden">
+      <div class="modal-window summary-modal-window">
+        <div class="summary-header">
+          <div id="summary-badge" class="summary-tag victory">EPIC STREAM VICTORY</div>
+          <h2 id="summary-title">BROADCAST COMPLETE! 🏆</h2>
+        </div>
+
+        <div class="summary-grade-container">
+          <div class="grade-label">STREAM RATING</div>
+          <div id="summary-rating" class="grade-badge">S+</div>
+        </div>
+
+        <div class="summary-stats-grid">
+          <div class="summary-stat-box">
+            <span class="stat-icon">👥</span>
+            <span class="stat-title">Peak Viewers</span>
+            <strong id="summary-viewers">48,200</strong>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-icon">📈</span>
+            <span class="stat-title">New Subs</span>
+            <strong id="summary-subs" class="neon-cyan">+1,450</strong>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-icon">💰</span>
+            <span class="stat-title">Ad & Tip Cash</span>
+            <strong id="summary-coins" class="neon-gold">+$350</strong>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-icon">🎯</span>
+            <span class="stat-title">Hit Accuracy</span>
+            <strong id="summary-accuracy">94%</strong>
+          </div>
+          <div class="summary-stat-box">
+            <span class="stat-icon">🔥</span>
+            <span class="stat-title">Max Combo</span>
+            <strong id="summary-combo">58x</strong>
+          </div>
+        </div>
+
+        <div class="summary-actions">
+          <button id="btn-summary-claim" class="btn-claim-rewards">CLAIM REWARDS & RETURN TO HUB 🎁</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
